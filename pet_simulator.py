@@ -10,7 +10,7 @@ class Pet(ABC):
 
     @property
     def hunger(self):
-        return f"Hunger: {self.__hunger}"
+        return self.__hunger
     
     @hunger.setter
     def hunger(self, hunger):
@@ -25,7 +25,7 @@ class Pet(ABC):
 
     @property
     def happiness(self):
-        return f"Happiness: {self.__happiness}"
+        return self.__happiness
     
     @happiness.setter
     def happiness(self, happiness):
@@ -40,9 +40,9 @@ class Pet(ABC):
 
     @property
     def energy(self):
-        return f"Energy: {self.__energy}"
+        return self.__energy
     
-    @happiness.setter
+    @energy.setter
     def energy(self, energy):
         if energy > 100:
              print("Cannot go above 100.")
@@ -76,29 +76,50 @@ class Pet(ABC):
         pass
 
 class Dog(Pet):
-    
-    def __init__(self, hunger:50, happiness:50, energy:50, name:str):
+    def __init__(self, name: str, hunger: int = 50, happiness: int = 50, energy: int = 50):
         super().__init__(hunger, happiness, energy, name)
     
     def play(self):
-        self.happiness + 20
+        self.happiness = self.__happiness + 20
 
-    def special_ability(self, happiness):
+    def special_ability(self):
         if self.happiness >= 80:
-            return print("\nLoyal Companion: Hunger decreases by 10 because your pet is too excited and forgets to eat.")
+            self.hunger -= 10
+            print("\nLoyal Companion: Hunger decreases by 10 because your pet is too excited and forgets to eat.")
         else:
-            print("Pets happiness level must be >= 80.")
+            print("Pet's happiness level must be >= 80.")
         
 
 
     
 def main():
+    userin = input("Enter a name for your pet: ")
+    pet = Dog(name=userin)
+
     while True:
-        userin = input("enter a name\n")
+        print("\nPet Status:")
+        print(pet.show_status())
+        
+        print("\nOptions: [1] Feed [2] Play [3] Sleep [4] Use Special Ability [5] Exit")
+        choice = input("Choose an action: ")
 
-        pet = Dog(userin)
+        if choice == "1":
+            pet.feed()
+            print(f"{pet.name} has been fed!")
+        elif choice == "2":
+            pet.play()
+            print(f"{pet.name} played and is happier!")
+        elif choice == "3":
+            pet.sleep()
+            print(f"{pet.name} slept and restored energy!")
+        elif choice == "4":
+            pet.special_ability()
+        elif choice == "5":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please select again.")
 
-        pet.name
 
 
 if __name__ == "__main__":
