@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+import random
+import time
 
 class Pet(ABC):
     
-    def __init__(self, hunger:int=50, happiness:int=50, energy:int=50, name:str=""):
+    def __init__(self, name:str, hunger:int=50, happiness:int=50, energy:int=50):
         self.hunger = hunger
         self.happiness = happiness
         self.energy = energy
@@ -45,8 +47,8 @@ class Pet(ABC):
     @energy.setter
     def energy(self, energy):
         if energy > 100:
-             print("Cannot go above 100.")
-             self.__energy = 100
+            print("Cannot go above 100.")
+            self.__energy = 100
         elif energy < 0:
             print("Cannot go below 0.")
             self.__energy = 0
@@ -54,22 +56,37 @@ class Pet(ABC):
             self.__energy = energy
 
     def feed(self):
-        self.hunger = self.__hunger - 20
-        self.energy = self.__energy + 10
+        self.__hunger -= 20
+        self.__energy += 10
     
     def play(self):
-        self.happiness = self.__happiness + 15
-        self.energy = self.__energy - 10
+        self.__happiness += 15
+        self.__energy -= 10
 
     def sleep(self):
-        self.energy = self.__energy + 20
-        self.hunger = self.__hunger + 10
+        self.__energy += 20
+        self.__hunger += 10
 
     def show_status(self):
         return f"Hunger: {self.hunger}\nHappiness: {self.happiness}\nEnergy: {self.energy}"
     
     def random_event(self):
-        pass
+        random_num = random.randrange(10)
+        if random_num > -1 and random_num < 4:
+            prob_rand_num = random.randrange(4)
+            if prob_rand_num == 0:
+                print(f"Random Event: {self.name} found a toy! Happiness increases by 15.")
+                self.__happiness += 10
+            elif prob_rand_num == 1:
+                print(f"Random Event: {self.name} found a snack! Hunger decreased by 10.")
+                self.__hunger -= 10
+            elif prob_rand_num == 2:
+                print(f"Random Event: {self.name} plays alone. Happiness increases by 10.")
+                self.__happiness += 10
+            else:
+                print(f"Random Event: {self.name} has a bad dream. Energy decreases by 10.")
+                self.__energy -= 10
+
 
     @abstractmethod
     def special_ability(self):
@@ -80,27 +97,76 @@ class Dog(Pet):
         super().__init__(hunger, happiness, energy, name)
     
     def play(self):
-        self.happiness = self.__happiness + 20
+        self.__happiness += 20
 
+    
     def special_ability(self):
-        if self.happiness >= 80:
-            self.hunger -= 10
+        if self.__happiness >= 80:
+            self.__hunger -= 10
             print("\nLoyal Companion: Hunger decreases by 10 because your pet is too excited and forgets to eat.")
         else:
             print("Pet's happiness level must be >= 80.")
         
+class Cat(Pet):
+    def __init__(self, name: str, hunger: int = 50, happiness: int = 50, energy: int = 50):
+        super().__init__(hunger, happiness, energy, name)
+
+    def sleep(self):
+        self.__energy += 30
+        self.__hunger += 5
+
+    def special_ability(self):
+        if self.__energy <= 20:
+            self.__energy += 15
+            print("\nIndependent Napper: Your pet took a nap on its own and energy increased by 15!")
+        else:
+            print("Pet's energy level must be <= 20.")
+
+class Dragon(Pet):
+    def __init__(self, name: str, hunger: int = 50, happiness: int = 50, energy: int = 50):
+        super().__init__(hunger, happiness, energy, name)
+    
+    def feed(self):
+        self.__hunger -= 30
+        self.__energy += 15
+        self.__happiness += 10
+
+    def play(self):
+        self.__happiness += 25
+        self.__hunger += 10
+        self.__energy -= 5
+
+    def special_ability(self):
+        if self.energy <= 20:
+            self.energy += 15
+            print("\nIndependent Napper: Your pet took a nap on its own and energy increased by 15!")
+        else:
+            print("Pet's energy level must be <= 20.")
 
 
     
 def main():
-    userin = input("Enter a name for your pet: ")
-    pet = Dog(name=userin)
+    userin = str(input("Enter a name for your pet: "))
+    print('Choose a pet type:\n1. Dog\n2. Cat\n3. Dragon')
+    while True:
+        pet = input("Enter your choice (1/2/3): ")
+        if pet == "1":
+            pet = Dog(name=userin)
+            break
+        elif pet == "2":
+            pet == Cat(name=userin)
+            break
+        elif pet == "3":
+            pet == Dragon(name=userin)
+            break
+        else:
+            print("Invalid Option, please try again!")
 
     while True:
         print("\nPet Status:")
         print(pet.show_status())
         
-        print("\nOptions: [1] Feed [2] Play [3] Sleep [4] Use Special Ability [5] Exit")
+        print("\nOptions:\n[1] Feed\n[2] Play\n[3] Sleep\n[4] Use Special Ability\n[5] Exit")
         choice = input("Choose an action: ")
 
         if choice == "1":
